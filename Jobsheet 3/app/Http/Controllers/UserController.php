@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Hash;
 class UserController extends Controller
 {   
     public function index(){
-        $user = UserModel::where('username', 'manager9')->firstOrFail();
-        return view('user', ['data' => $user]);
+        $jumlahPengguna = UserModel::where('level_id', 2)->count();
+        return view('user', ['data' => $jumlahPengguna]);
     }
 
 }

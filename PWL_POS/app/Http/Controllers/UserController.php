@@ -160,5 +160,11 @@ class UserController extends Controller
          'user' => $user,
          'activeMenu' => $activeMenu
       ]);
+   }  
+
+   function create_ajax(){
+      $level = LevelModel::select('level_id', 'level_nama')->get();
+
+      return view('user.create_ajax')-> with('level',$level);
    }
 }

@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
     "name": "laravel/laravel",
     "type": "project",
     "description": "The skeleton application for the Laravel framework.",
@@ -66,9 +65,4 @@
     },
     "minimum-stability": "stable",
     "prefer-stable": true
-=======
-    "require": {
-        "yajra/laravel-datatables-oracle": "^10.11"
-    }
->>>>>>> 8225f6e28fa96b156bdde9c312803687b279efbb
 }

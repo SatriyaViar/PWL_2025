@@ -6,10 +6,95 @@
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
                 <a class="btn btn-sm btn-primary mt-1" href="{{ url('user/create') }}">Tambah</a>
+            </div>
+        </div>
+        <div class="card-body">
+            @if (session('succses'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
+            @if (session('error'))
+                <div class="alert alert-danger">{{ session('erorr') }}</div>
+            @endif
+            <table class="table table-bordered table-striped table-hover table-sm" id="table_user">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Nama</th>
+                        <th>User Level</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+@endsection
+
+@push('css')
+@endpush
+
+@push('js')
+<script>
+    $(document).ready(function() {
+        var dataUser = $('#table_user').DataTable({
+            serverSide: true,
+            ajax: {
+                url: "{{ url('user/list') }}",
+                dataType: "json",
+                type: "POST"
+            },
+            columns: [
+                {
+                    data: "DT_RowIndex", // dari addIndexColumn() Laravel
+                    className: "text-center",
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: "username",
+                    className: "",
+                    orderable: true,
+                    searchable: true
+                },
+                {
+                    data: "nama",
+                    className: "",
+                    orderable: true,
+                    searchable: true
+                },
+                {
+                    data: "level.level_nama", // data relasi dari model
+                    className: "",
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: "action",
+                    className: "",
+                    orderable: false,
+                    searchable: false
+                }
+            ]
+        });
+    });
+</script>
+@endpush
+
+
+
+
+{{-- @extends('layouts.template')
+
+@section('content')
+    <div class="card card-outline card-primary">
+        <div class="card-header">
+            <h3 class="card-title">{{ $page->title }}</h3>
+            <div class="card-tools">
+                <a class="btn btn-sm btn-primary mt-1" href="{{ url('user/create') }}">Tambah</a>
                 <button onclick="modalAction('{{ url('/user/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Tambah Ajax</button>
             </div>
         </div>
-        {{-- BENER GA NYA GATAU --}}
+        {{-- BENER GA NYA GATAU 
         <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" data-width="75%" aria-hidden="true"></div>
         <div class="card-body">
 
@@ -114,4 +199,4 @@
                     });
                 });
             </script>
-        @endpush
+        @endpush --}}

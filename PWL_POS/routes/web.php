@@ -210,6 +210,8 @@ Route::group(['prefix'=>'user'], function(){
     Route::put('/{id}', [UserController::class, 'update']);
     Route::get('/{id}/edit_ajax', [UserController::class,'edit_ajax']); //Menampilkan Halaman form Edit User AJAX
     Route::put('/{id}/update_ajax', [UserController::class,'update_ajax']); //Menyimpan perubahan data User AJAX
+    Route::get('/{id}/delete_ajax',[UserController::class,'confirm_ajax']);
+    Route::delete('/{id}/delete_ajax', [UserController::class, 'delete_ajax']);
     Route::delete('/{id}', [UserController::class, 'destroy']);
 });
 // // User routes group

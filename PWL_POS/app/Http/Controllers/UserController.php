@@ -225,7 +225,7 @@ class UserController extends Controller
       if ($request->ajax() || $request->wantsJson()) {
          $rules = [
             'level_id' => 'required|interger',
-            'username' => 'required|max:20|unique:m_user,username,' . $id . ',user_id',
+            'username' => 'required|max:20|unique:m_user, username ,' . $id . ', user_id',
             'nama'     => 'required|max:100',
             'password' => 'nullable|min:6|max:20',
          ];
@@ -257,5 +257,37 @@ class UserController extends Controller
          }
       }
       return redirect('/');
+   }
+
+   public function confirm_ajax(string $id){
+        $user = UserModel::find($id);
+        return view('user.confirm_ajax', ['user' => $user]);
+   }
+
+    public function delete_ajax(Request $request, $id)
+   {
+        if($request->ajax() || $request->wantsJson()){
+            $user = UserModel::find($id);
+            if($user){
+                try {
+                    UserModel::destroy($id);
+                    return response()->json([
+                        'status'  => true,
+                        'message' => 'Data berhasil dihapus'
+                    ]);
+                } catch (\Illuminate\Database\QueryException $e) {
+                    return response()->json([
+                        'status'  => false,
+                        'message' => 'Data user gagal dihapus karena masih terdapat tabel lain yang terkait dengan data ini'
+                    ]);
+                }
+            }else{
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Data tidak ditemukan'
+                ]);
+            }
+         }
+      redirect('/');
    }
 }

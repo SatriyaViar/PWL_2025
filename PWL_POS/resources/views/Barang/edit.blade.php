@@ -1,0 +1,113 @@
+@extends('layouts.template')
+
+@section('content')
+    <div class="card card-outline card-primary">
+        <div class="card-header">
+            <h3 class="card-title">{{ $page->title }}</h3>
+            <div class="card-tools"></div>
+        </div>
+        <div class="card-body">
+            @empty($barang)
+                <div class="alert alert-danger alert-dismissible">
+                    <h5><i class="icon fas fa-ban"></i> Kesalahan!</h5>
+                    Data yang Anda cari tidak ditemukan.
+                </div>
+                <a href="{{ url('barang') }}" class="btn btn-sm btn-default mt-2">Kembali</a>
+            @else
+                <form method="POST" action="{{ url('/barang/' . $barang->barang_id) }}" class="form-horizontal">
+                    @csrf
+                    {!! method_field('PUT') !!} <!-- tambahkan baris ini untuk proses edit yang butuh method PUT -->
+                    <div class="form-group row">
+                        <label class="col-1 control-label col-form-label">Nama Kategori</label>
+                        <div class="col-11">
+                            <select class="form-control" id="kategori_id" name="kategori_id" required>
+                                <option value="">- Pilih Kategori -</option>
+                                @foreach ($kategori as $item)
+                                    <option value="{{ $item->kategori_id }}" @if ($item->kategori_id == $barang->kategori_id) selected @endif>
+                                        {{ $item->kategori_nama }}</option>
+                                @endforeach
+                            </select>
+                            @error('kategori_id')
+                                <small class="form-text text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-1 control-label col-form-label">Kode Barang</label>
+                        <div class="col-11">
+                            <input type="text" class="form-control" id="barang_kode" name="barang_kode"
+                                value="{{ old('barang_kode', $barang->barang_kode) }}" required>
+                            @error('barang_kode')
+                                <small class="form-text text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-1 control-label col-form-label">Nama Barang</label>
+                        <div class="col-11">
+                            <input type="text" class="form-control" id="barang_nama" name="barang_nama"
+                                value="{{ old('barang_nama', $barang->barang_nama) }}" required>
+                            @error('barang_nama')
+                                <small class="form-text text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-1 control-label col-form-label">Harga Jual</label>
+                        <div class="col-11">
+                            <input type="text" class="form-control rupiah" id="harga_jual" name="harga_jual"
+                                value="{{ old('harga_jual', number_format($barang->harga_jual, 0, ',', '.')) }}" required>
+                            @error('harga_jual')
+                                <small class="form-text text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+                    </div>
+                    
+                    <div class="form-group row">
+                        <label class="col-1 control-label col-form-label">Harga Beli</label>
+                        <div class="col-11">
+                            <input type="text" class="form-control rupiah" id="harga_beli" name="harga_beli"
+                                value="{{ old('harga_beli', number_format($barang->harga_beli, 0, ',', '.')) }}" required>
+                            @error('harga_beli')
+                                <small class="form-text text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+                    </div>
+                    
+                    <div class="form-group row">
+                        <label class="col-1 control-label col-form-label"></label>
+                        <div class="col-11">
+                            <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+                            <a class="btn btn-sm btn-default ml-1" href="{{ url('barang') }}">Kembali</a>
+                        </div>
+                    </div>
+                </form>
+            @endempty
+        </div>
+    </div>
+@endsection
+
+@push('css')
+@endpush
+@push('js')
+    <script>
+        document.querySelectorAll('.rupiah').forEach(function(input) {
+            input.addEventListener('input', function(e) {
+
+                // Bersihkan input hanya angka
+                let value = this.value.replace(/[^,\d]/g, '').toString();
+                let split = value.split(',');
+                let sisa = split[0].length % 3;
+                let rupiah = split[0].substr(0, sisa);
+                let ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+                if (ribuan) {
+                    let separator = sisa ? '.' : '';
+                    rupiah += separator + ribuan.join('.');
+                }
+
+                this.value = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
+            });
+        });
+    </script>
+@endpush

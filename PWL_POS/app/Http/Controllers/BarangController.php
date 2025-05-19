@@ -95,8 +95,8 @@ class BarangController extends Controller
 {
     $request->validate([
         'kategori_id'  => 'required|integer',
-        'barang_kode'  => 'required|string|min:3|unique:,barang_kode',
-        'barang_nama'  => 'required|string|min:3|unique:,barang_nama',
+        'barang_kode'  => 'required|string|min:3|unique:m_barang,barang_kode',
+        'barang_nama'  => 'required|string|min:3|unique:m_barang,barang_nama',
         'harga_jual'   => 'required',
         'harga_beli'   => 'required'
     ]);
@@ -137,18 +137,18 @@ class BarangController extends Controller
             })
             ->addColumn('aksi', function ($barang) {  // menambahkan kolom aksi
 
-            $btn = '<a href="' . url('/barang/' . $barang->barang_id) . '" class="btn btn-info btn-sm">Detail</a> ';
-            $btn .= '<a href="' . url('/barang/' . $barang->barang_id . '/edit') . '" class="btn btn-warning btn-sm">Edit</a> ';
-            $btn .= '<form class="d-inline-block" method="POST" action="' . url('/barang/' . $barang->barang_id) . '">' . csrf_field() . method_field('DELETE') . '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Apakah Anda yakin menghapus data ini?\')">Hapus</button></form>';
-            return $btn;
+            // $btn = '<a href="' . url('/barang/' . $barang->barang_id) . '" class="btn btn-info btn-sm">Detail</a> ';
+            // $btn .= '<a href="' . url('/barang/' . $barang->barang_id . '/edit') . '" class="btn btn-warning btn-sm">Edit</a> ';
+            // $btn .= '<form class="d-inline-block" method="POST" action="' . url('/barang/' . $barang->barang_id) . '">' . csrf_field() . method_field('DELETE') . '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Apakah Anda yakin menghapus data ini?\')">Hapus</button></form>';
+            // return $btn;
 
-                // $btn  = '<button onclick="modalAction(\'' . url('/barang/' . $barang->barang_id .
-                //     '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
-                // $btn .= '<button onclick="modalAction(\'' . url('/barang/edit' . $barang->barang_id .
-                //     '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
-                // $btn .= '<button onclick="modalAction(\'' . url('/barang/' . $barang->barang_id .
-                //     '/delete_ajax') . '\')"  class="btn btn-danger btn-sm">Hapus</button> ';
-                // return $btn;
+                $btn  = '<button onclick="modalAction(\'' . url('/barang/' . $barang->barang_id .
+                    '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
+                $btn .= '<button onclick="modalAction(\'' . url('/barang/edit' . $barang->barang_id .
+                    '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
+                $btn .= '<button onclick="modalAction(\'' . url('/barang/' . $barang->barang_id .
+                    '/delete_ajax') . '\')"  class="btn btn-danger btn-sm">Hapus</button> ';
+                return $btn;
             })
             ->rawColumns(['aksi']) // memberitahu bahwa kolom aksi adalah html
             ->make(true);

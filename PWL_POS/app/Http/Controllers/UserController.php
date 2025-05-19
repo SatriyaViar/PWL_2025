@@ -145,7 +145,13 @@ class UserController extends Controller
          'activeMenu' => $activeMenu
       ]);
    }
+   public function show_ajax(String $id)
+   {
+       $user = UserModel::find($id);
+       $level = LevelModel::select('level_id', 'level_nama')->get();
 
+       return view('user.show_ajax', compact('user', 'level'));
+   }
    function create_ajax()
    {
       $level = LevelModel::select('level_id', 'level_nama')->get();
@@ -219,45 +225,53 @@ class UserController extends Controller
       return view('user.edit_ajax', ['user' => $user, 'level' => $level]);
    }
 
-   function update_ajax(Request $request, $id)
-   {
-      // cek apakah request dari ajax
-      if ($request->ajax() || $request->wantsJson()) {
-         $rules = [
-            'level_id' => 'required|interger',
-            'username' => 'required|max:20|unique:m_user, username ,' . $id . ', user_id',
+   public function update_ajax(Request $request, $id)
+{
+    // Cek apakah request berasal dari AJAX
+    if ($request->ajax()) {
+        // Validasi input
+        $rules = [
+            'level_id' => 'required|integer',
+            'username' => 'required|max:20|unique:m_user,username,' . $id . ',user_id',
             'nama'     => 'required|max:100',
             'password' => 'nullable|min:6|max:20',
-         ];
+        ];
 
-         // use Illumintae\Support\Facades\Validator;
-         $validator = Validator::make($request->all(), $rules);
-         if ($validator->fails()) {
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
             return response()->json([
-               'status'    => false,
-               'message'   => 'Validasi gagal.',
-               'msgField'  => $validator->erorrs()
+                'status'    => false,
+                'message'   => 'Validasi gagal.',
+                'msgField'  => $validator->errors()
             ]);
-         }
-         $check = UserModel::find($id);
-         if ($check) {
+        }
+
+        // Cek apakah user ditemukan
+        $user = UserModel::find($id);
+        if ($user) {
+            // Jika password kosong, jangan update password
             if (!$request->filled('password')) {
-               $request->request->remove('passowrd');
+                $request->request->remove('password');
             }
-            $check->update($request->all());
+            // Update data user
+            $user->update($request->all());
+
             return response()->json([
-               'status'    => true,
-               'message'   => 'Data berhasil diupdate'
+                'status'    => true,
+                'message'   => 'Data berhasil diupdate'
             ]);
-         } else {
+        } else {
             return response()->json([
-               'status'    => false,
-               'message'   => 'Data tidak ditemukan'
+                'status'    => false,
+                'message'   => 'Data tidak ditemukan'
             ]);
-         }
-      }
-      return redirect('/');
-   }
+        }
+    }
+
+    // Jika bukan request AJAX
+    return redirect('/user');
+}
+
 
    public function confirm_ajax(string $id){
         $user = UserModel::find($id);

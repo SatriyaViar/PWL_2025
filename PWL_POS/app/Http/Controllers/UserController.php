@@ -76,7 +76,7 @@ class UserController extends Controller
          'username' => 'required|string|min:3|unique:m_user,username,' . $id . ',user_id',
          'nama'     => 'required|string|max:100',
          'password' => 'nullable|min:5',
-         'level_id'    => 'required|integer'
+         'level_id' => 'required|integer'
       ]);
 
       UserModel::find($id)->update([
@@ -234,7 +234,7 @@ class UserController extends Controller
             'level_id' => 'required|integer',
             'username' => 'required|max:20|unique:m_user,username,' . $id . ',user_id',
             'nama'     => 'required|max:100',
-            'password' => 'nullable|min:6|max:20',
+            'password' => 'nullable|min:6|max:20'
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -304,4 +304,53 @@ class UserController extends Controller
          }
       redirect('/');
    }
+
+   public function profile()
+    {
+        $user = auth()->user();
+        $breadcrumb = (object) [
+            'title' => 'Profile',
+            'list' => ['Home', 'Profile']
+        ];
+
+        $page = (object) [
+            'title' => 'User Profile'
+        ];
+
+        $activeMenu = 'profile';
+        return view('user.profile', compact('breadcrumb', 'page', 'user', 'activeMenu'));
+    }
+
+     public function updateProfilePicture(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $authUser = auth()->user();
+        $user = UserModel::find($authUser->user_id);
+
+        if ($user->image && file_exists(public_path($user->image))) {
+            unlink(public_path($user->image));
+        }
+
+        $file = $request->file('image');
+        $fileName = time() . '_' . $file->getClientOriginalName();
+        $filePath = 'uploads/profile/';
+
+        if (!file_exists(public_path($filePath))) {
+            mkdir(public_path($filePath), 0777, true);
+        }
+
+        $file->move(public_path($filePath), $fileName);
+
+        $user->image = $filePath . $fileName;
+        $user->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Profile picture updated successfully',
+            'image_url' => $user->getProfilePictureUrl()
+        ]);
+    }
 }

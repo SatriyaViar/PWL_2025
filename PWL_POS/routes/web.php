@@ -311,6 +311,9 @@ Route::middleware(['auth'])->group(function () {
         // Routes/web.php
         Route::middleware('auth')->post('stock', [StockController::class, 'store']);
     });
+
+    Route::get('/profile', [UserController::class, 'profile']);
+    Route::post('/profile/update-picture', [UserController::class, 'updateProfilePicture']);
 });
  
 // // User routes group

@@ -6,6 +6,7 @@ use App\Models\BarangModel;
 use App\Models\KategoriModel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Yajra\DataTables\Facades\DataTables;
@@ -122,7 +123,7 @@ class BarangController extends Controller
 
     public function list(Request $request)
     {
-        $barangs = BarangModel::select('barang_id', 'kategori_id', 'barang_nama', 'barang_kode', 'harga_beli', 'harga_jual')->with('kategori');
+        $barangs = BarangModel::select('barang_id', 'kategori_id', 'barang_nama', 'barang_kode', 'harga_beli', 'harga_jual', 'image')->with('kategori');
 
         if ($request->kategori_id) {
             $barangs->where('kategori_id', $request->kategori_id);
@@ -137,6 +138,14 @@ class BarangController extends Controller
             ->editColumn('harga_jual', function ($row) {
                 return number_format($row->harga_jual, 0, ',', '.');
             })
+            ->addColumn('image', function ($row) {
+            $path = public_path('uploads/barang/' . $row->foto);
+            if ($row->foto && File::exists($path)) {
+                return asset('uploads/barang/' . $row->foto);
+            } else {
+                return null; // penting! agar di JS muncul "Foto tidak tersedia"
+            }
+        })
             ->addColumn('aksi', function ($barang) {  // menambahkan kolom aksi
 
                 // $btn = '<a href="' . url('/barang/' . $barang->barang_id) . '" class="btn btn-info btn-sm">Detail</a> ';

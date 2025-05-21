@@ -13,13 +13,14 @@ class BarangController extends Controller
         return BarangModel::all();
     }
 
-     public function store(Request $request){
+    public function store(Request $request){
         $validator = Validator::make($request->all(), [
             'barang_kode' => 'required|unique:m_barang,barang_kode',
             'barang_nama' => 'required',
             'harga_beli' => 'required|numeric',
             'harga_jual' => 'required|numeric',
-            'kategori_id' => 'required|exists:m_kategori,kategori_id'
+            'kategori_id' => 'required|exists:m_kategori,kategori_id',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
         if ($validator->fails()) {
@@ -32,6 +33,8 @@ class BarangController extends Controller
             'harga_beli' => $request->harga_beli,
             'harga_jual' => $request->harga_jual,
             'kategori_id' => $request->kategori_id,
+            // 'image' => $request->image->hashName()
+                'image' => $request->image ?? 'default.jpg', // <-- tambahkan ini
 
         ]);
 
